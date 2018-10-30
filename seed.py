@@ -61,6 +61,17 @@ def load_movies():
 
 def load_ratings():
     """Load ratings from u.data into database."""
+    Rating.query.delete()
+
+    for row in open ("seed_data/u.data"):
+        row = row.split('\t')
+
+        rating = Rating(movie_id=row[1], user_id=row[0], score=row[2])
+
+        db.session.add(rating)
+
+    db.session.commit()
+
 
     #rating_id, movie_id, user_id, score
     #third is definitely score but others ?????
