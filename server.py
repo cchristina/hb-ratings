@@ -162,12 +162,17 @@ def render_movie_lookup(movie_id):
     movie = Movie.query.filter_by(movie_id = movie_id).first()
     movie_ratings = Rating.query.filter_by(movie_id = movie_id).all()
     user_ratings = {}
+    score_list = []
 
     #user id, grab from list of all ratings
     # rating, also grab from list of all ratings 
     for rating in movie_ratings:
         user_ratings[rating.user_id] = rating.score
+        score_list.append(rating.score)
+        print(rating.user_id, rating.score)
    
+    total_ratings = len(score_list)
+    average_score = round(sum(score_list)/total_ratings, 2)
 
     movie_title = movie.title
     release = str(movie.released_at) #fix this to more proper version later
@@ -177,7 +182,7 @@ def render_movie_lookup(movie_id):
     #relased_at (year)
     #imdb_url 
 
-    return render_template("movielookup.html", movie_title = movie_title, release = release, imdb=imdb)
+    return render_template("movielookup.html", movie_title = movie_title, release = release, imdb=imdb, user_ratings = user_ratings, average_score=average_score, total_ratings=total_ratings)
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
