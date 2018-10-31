@@ -5,6 +5,8 @@ from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash, session)
 from flask_debugtoolbar import DebugToolbarExtension
 
+from datetime import datetime, timedelta 
+
 from model import User, Rating, Movie, connect_to_db, db
 
 
@@ -31,17 +33,105 @@ def user_list():
     users = User.query.all()
     return render_template("user_list.html", users=users)
 
-@app.route('/register', methods=["GET"])
-def register_form():
 
-    return render_template("register_form.html")
 
-@app.route("/regsiter", methods=["POST"])
-def register_process():
-    new_user = request.form.get("registration")
-    print("TESESETYEWYSEEW*************")
+@app.route('/movies')
+def movie_list():
 
-    return redirect("/")
+    movies = Movie.query.all()
+    return render_template("movie_list.html", movies=movies) 
+
+
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    if (request.method=="GET"):
+        return render_template("register_form.html")
+
+    elif (request.method=="POST"):
+
+        email = request.form.get("reg-email")
+        pw = request.form.get("pw") #this doesn't feel very secure
+        dob = request.form.get("dob") #yyyy-mm-dd 
+        zipcode = request.form.get("zipcode")
+
+        dobdt = datetime.strptime(dob, "%Y-%m-%d")
+        now = datetime.now()
+        age = int((now - dobdt).days/365)
+        #print(age, type(age), "************************************")
+
+        if (not User.query.filter_by(email=email).first()):
+            
+            print(type(dobdt), dobdt)
+            new_user = User(email=email, password=pw, age=age, zipcode=zipcode)
+            db.session.add(new_user)
+            db.session.commit()
+
+            return redirect("/")
+
+        else:
+            return redirect("/login")
+            #you already have an account flash
+
+        return redirect("/")
+
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if  (request.method=="GET"): #log in form
+
+
+        if (session.get("current_user", 0)): #checks if user is logged in this is ugly and not the way to do it please fix
+            return redirect ("/logout")
+
+        else:
+            return render_template("login.html")
+
+    
+
+
+    else: 
+        #processing login form
+        email = request.form.get("log-email")
+        pw = request.form.get("password") #this still doesn't feel very secure
+
+        try: #tries to query the login information
+            current_user = User.query.filter_by(email=email).first()
+            queryPW= current_user.password
+
+        except: #email is not valid redirects user to register an account
+            flash("You do not yet have an account, please register!")
+            return redirect("/register") #add flash message telling to register
+      
+        
+        if (pw==queryPW): #checks if password is accurate
+
+            session['current_user']=current_user.user_id
+            flash("You have logged in!")
+
+            return redirect ("/")
+        
+        else:
+            flash('wrong password')
+            return redirect("/login")
+
+     #    945 | test@example.com     | 1234     |  36 | 94509
+     #    946 | testuser@example.com | passw0rd |  35 | 12345
+
+
+@app.route("/logout", methods=["GET", "POST"])
+def handle_logout():
+
+    if (request.method=="GET"):
+        return render_template("logout.html")
+
+    else:
+        if request.form.get("logout"):
+            session['current_user'] = None
+            flash("you have logged out")
+            return redirect("/")
+        else:
+            flash("you are still logged in")
+            return redirect("/")
 
 
 if __name__ == "__main__":
