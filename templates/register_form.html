@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1> Register for The Eye! </h1>
+
+<form action="/register" id="registration" name="registration" method="POST">
+	<table>
+		<tr>
+			<td>Email: </td> 
+			<td><input type="email" name="reg-email" id="reg-email" required="required" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" value="enter email"></td>
+			 <!--found re on w3 schools-->
+		</tr>
+
+		<tr>
+			<td>Password:</td>
+			<td><input type="password" name="pw" id="pw" required="required"></td>
+			<!--TODO: CONFIRM PASSWORD-->
+		</tr>
+		
+		<tr>
+			<td>DOB: </td> 
+			<td><input type="date" name="dob"></td>
+		 	<!--Use what we just learned about datetime to calculate age????-->
+		</tr>
+
+
+		<tr>
+			<td> Zipcode:</td> 
+			<td> <input type="text" name="zipcode" id="zipcode"> </td>
+		<!--not required? how to format because it's different in different countries-->
+		</tr>
+	</table>
+
+	<input type="submit">
+</form>
+ 
+
+
+
+{% endblock %}

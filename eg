@@ -1,0 +1,13 @@
+                                    Table "public.users"
+  Column  |         Type          |                        Modifiers                        
+----------+-----------------------+---------------------------------------------------------
+ user_id  | integer               | not null default nextval('users_user_id_seq'::regclass)
+ email    | character varying(64) | 
+ password | character varying(64) | 
+ age      | integer               | 
+ zipcode  | character varying(15) | 
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (user_id)
+Referenced by:
+    TABLE "ratings" CONSTRAINT "ratings_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(user_id)
+

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+	You are already logged in, perhaps you want to log out?
+	<form action="/logout" name="logout" id="logout" method="POST">
+
+		<button type=submit name="logout" value=1>Yes, log me out!</button>
+		<button type=submit name="logout" value=0>No, take me back!</button>
+
+
+	</form>
+
+
+
+{% endblock %}
