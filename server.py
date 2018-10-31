@@ -134,6 +134,51 @@ def handle_logout():
             return redirect("/")
 
 
+@app.route('/users/<user_id>', methods=["GET"])
+def render_lookup(user_id):
+
+    user = User.query.filter_by(user_id = user_id).first()
+    email = user.email
+    age = user.age
+    zipcode = user.zipcode
+
+    if (email==None):
+        email = "no email supplied"
+    
+
+    user_ratings = Rating.query.filter_by(user_id=user_id).all()
+    movie_ratings = {}
+
+    for rating in user_ratings:
+        movie_title = Movie.query.filter_by(movie_id = rating.movie_id).first().title
+        movie_ratings[movie_title] = rating.score
+
+
+    return render_template("userlookup.html", user_id = user_id, email=email, age=age, zipcode=zipcode, movie_ratings = movie_ratings)
+
+@app.route('/movie/<movie_id>', methods=["GET"])
+def render_movie_lookup(movie_id):
+
+    movie = Movie.query.filter_by(movie_id = movie_id).first()
+    movie_ratings = Rating.query.filter_by(movie_id = movie_id).all()
+    user_ratings = {}
+
+    #user id, grab from list of all ratings
+    # rating, also grab from list of all ratings 
+    for rating in movie_ratings:
+        user_ratings[rating.user_id] = rating.score
+   
+
+    movie_title = movie.title
+    release = str(movie.released_at) #fix this to more proper version later
+    imdb = movie.imdb_url
+    #movie_id
+    #title
+    #relased_at (year)
+    #imdb_url 
+
+    return render_template("movielookup.html", movie_title = movie_title, release = release, imdb=imdb)
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
