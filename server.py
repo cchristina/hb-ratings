@@ -61,7 +61,6 @@ def register():
 
         if (not User.query.filter_by(email=email).first()):
             
-            print(type(dobdt), dobdt)
             new_user = User(email=email, password=pw, age=age, zipcode=zipcode)
             db.session.add(new_user)
             db.session.commit()
@@ -164,25 +163,65 @@ def render_movie_lookup(movie_id):
     user_ratings = {}
     score_list = []
 
+    logged_in = session['current_user']
     #user id, grab from list of all ratings
     # rating, also grab from list of all ratings 
     for rating in movie_ratings:
         user_ratings[rating.user_id] = rating.score
         score_list.append(rating.score)
-        print(rating.user_id, rating.score)
    
     total_ratings = len(score_list)
     average_score = round(sum(score_list)/total_ratings, 2)
 
     movie_title = movie.title
-    release = str(movie.released_at) #fix this to more proper version later
+    release = str(movie.released_at)[:4] #fix this to more proper version later
     imdb = movie.imdb_url
     #movie_id
     #title
     #relased_at (year)
     #imdb_url 
 
-    return render_template("movielookup.html", movie_title = movie_title, release = release, imdb=imdb, user_ratings = user_ratings, average_score=average_score, total_ratings=total_ratings)
+
+    return render_template("movielookup.html", movie_id=movie_id, movie_title = movie_title, release = release, imdb=imdb, user_ratings = user_ratings, average_score=average_score, total_ratings=total_ratings, logged_in = logged_in)
+
+
+@app.route("/addRating", methods =["POST"])
+def add_rating():
+
+    score = int(request.form.get("score"))
+    movie_id = int(request.form.get("movieID"))
+    if (session['current_user']):
+        user_id = session['current_user']
+    else:
+        flash("you must be logged in to rate movies")
+        return redirect(request.referrer)
+
+
+    app.logger.info(request.form.get("movieID"))
+    app.logger.info(type(request.form.get("movieID")))
+
+
+    # existing = Rating.query.filter_by(user_id=user_id).first()
+    # if (existing is not None):
+
+    #     app.logger.info("test")
+        #UPDATE ratings SET score=score WHERE user_id = user_id
+    #   return redirecskh;lkrh;rk';    
+
+    new_rating = Rating(movie_id = movie_id, user_id=user_id, score=score)
+
+    db.session.add(new_rating)
+    db.session.commit()
+
+    #grab user id from session
+    #grab movie id from source
+    #add tp ratings
+    flash("added rating!")
+
+    return redirect(request.referrer)
+
+
+
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
