@@ -3,8 +3,8 @@
 {% block content %}
 
 
-<h2>Users </h2>
-
+<h2>Movies </h2>
+<a href="/">take me home</a>
 <ul>
 	{% for movie in movies %}
 	<li> <a href="/movie/{{ movie.movie_id }}">{{ movie.title }} ({{ movie.movie_id }}) </a>

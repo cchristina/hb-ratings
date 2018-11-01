@@ -2,6 +2,15 @@
 
 {% block content %}
 
+<script>
+
+	function forgot(){
+
+		var eail = prompt("enter your email");
+	}
+
+</script>
+
 <h1> Log In! </h1>
 
 <form action="/login" id="login" name="login" method="POST">
@@ -17,9 +26,18 @@
 	</table>
 
 	<input type="submit">
+	<button id="forgot1">i forgot</button><!--onclick=just straight up log them in anyway-->
 
+	</form>
+		<button id="forgot2" onclick="forgot()">i forgot</button>
+
+	<form action="/forgot" id="forgot" method="post">
+		<button id="forgot" onclick="forgot()">i forgot</button>
+		
 	</form>
 
 
+	<br><br>
+<a href="/register"> Don't already have an account, click here to sign up!</a><br>
 
 {% endblock %}

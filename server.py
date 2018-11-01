@@ -64,6 +64,7 @@ def register():
             new_user = User(email=email, password=pw, age=age, zipcode=zipcode)
             db.session.add(new_user)
             db.session.commit()
+            # session['current_user'] = User.query.filter_by(email=email).first().user_id
 
             return redirect("/")
 
@@ -71,6 +72,7 @@ def register():
             return redirect("/login")
             #you already have an account flash
 
+         
         return redirect("/")
 
 
@@ -124,13 +126,20 @@ def handle_logout():
         return render_template("logout.html")
 
     else:
-        if request.form.get("logout"):
+    
+        if int(request.form.get("logout")):
+ 
             session['current_user'] = None
             flash("you have logged out")
             return redirect("/")
         else:
             flash("you are still logged in")
             return redirect("/")
+
+@app.route("/forgot", methods = ["POST"])
+def forgot_password():
+
+    return render_template("/unsecure.html")
 
 
 @app.route('/users/<user_id>', methods=["GET"])
@@ -201,12 +210,13 @@ def add_rating():
     app.logger.info(type(request.form.get("movieID")))
 
 
-    # existing = Rating.query.filter_by(user_id=user_id).first()
-    # if (existing is not None):
-
-    #     app.logger.info("test")
-        #UPDATE ratings SET score=score WHERE user_id = user_id
-    #   return redirecskh;lkrh;rk';    
+    rating = Rating.query.filter_by(user_id=user_id, movie_id=movie_id).first()
+    
+    if (rating):
+        app.logger.info("update test")
+        rating.score = score
+        db.session.commit()
+        return redirect(request.referrer)
 
     new_rating = Rating(movie_id = movie_id, user_id=user_id, score=score)
 
