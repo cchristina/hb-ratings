@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script type="text/javascript">
+	function showBreakdown() {
+    	var x = document.getElementById("rating_breakdown");
+    	if (x.style.display === "none") {
+       		 x.style.display = "block";
+    	} else {
+      	  x.style.display = "none";
+    	}
+	}
+
+
+</script>
+
+<style>
+
+#rating_breakdown{
+
+
+	display: none;
+	width: 12 em;
+}
+
+</style>
+
+
+<h1> {{movie_title}} </h1>
+<h3><a href="/movies"> take me back to all the movies</a></h3>
+
+<br><strong>release year:</strong> {{release}}
+<br><strong> <a href="{{imdb}}">imdb</a></strong>  <!-- change to actual link later -->
+<br>Rated an average of {{average_score}} by {{total_ratings}} users. 
+
+
+<button onclick="showBreakdown()">Click to see breakdown</button>
+
+
+<br><br>
+{% if logged_in %}
+
+<form action="/addRating" id="addRating" name="addRating" method = "POST" > <!-- we only want to show this if user is logged in-->
+Rate me!
+<select name="score" id="score" value="score">
+	<option value=1>1</option>
+	<option value=2>2</option>
+	<option value=3>3</option>
+	<option value=4>4</option>
+	<option value=5>5</option>
+
+
+	<input type ="hidden" name ="movieID" value ={{movie_id}}>
+
+
+<input type="submit" value="go!">
+
+</form>
+
+{% endif %}
+
+
+ 
+<div id="rating_breakdown" name="rating_breakdown">
+
+
+<h2>Ratings for {{movie_title}}</h2>
+<table>
+
+	<tr> 
+		<td> user</td>
+		<td> score </td>
+	</tr>
+{% for user in user_ratings %}
+
+<tr>
+	<td>
+	{{user}}
+	</td>
+	<td>
+		{{user_ratings[user]}}
+	</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+ 
+
+{% endblock %}
